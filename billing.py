@@ -1,0 +1,118 @@
+import mysql.connector
+con=mysql.connector.connect(host="localhost",user="root",password="vivek2211",database="biling")
+cur=con.cursor()
+
+#cur.execute("create table product (pid int primary key auto_increment ,pname varchar(40),ppr int not null)")
+
+def add():
+    pid=int(input("enter pid:"))
+    pname=input("enter pnaame:")
+    #eloc=input("enter location:")
+    ppr=int(input("enter price:"))
+                 
+    q="insert into product (pid,pname,ppr)values(%s,%s,%s)"
+    val=(pid,pname,ppr)
+
+    cur.execute(q,val)
+
+    con.commit()
+
+def show():
+    cur.execute("select * from product")
+    data=cur.fetchall()
+    print("pid    pname   ppr")
+    print("--------------------")
+    for x in data:
+        print(x[0]," ",x[1]," ",x[2])
+
+
+
+def delete():
+    pid=int(input("enter pid for delete:"))
+    q="delete from product where pid=%s"
+    val=(pid,)
+    cur.execute(q,val)
+    con.commit()
+    print("--------------deleted------------")
+
+def update():
+    ppr=int(input("enter price:"))
+    pid=int(input("enter product id:"))
+    q="update product set ppr=%s where pid=%s"
+    val=(ppr,pid,)
+    cur.execute(q,val)
+    con.commit()
+    print("----------------------updated--------------")
+
+
+#def bill():
+    
+    
+
+def admin():   
+    ch=1
+    while ch!=0:
+        
+        print("****************enter choice********************* ")
+        print("1=>>>  add the product")
+        print("2=>>>  show added product")
+        print("3=>>>  delet product")
+        print("4=>>>  update product")
+        print("5=>>>  exit")
+
+        ch=int(input())
+        if(ch==1):
+            add()
+        elif(ch==2):
+            show()
+        elif(ch==3):
+            delete()
+        elif(ch==4):
+            update()
+        else:
+            ch=0
+    else:
+        print("************task end**************")
+def bill():
+    pid=-1
+    sum=0
+    while pid!=0:
+        print("-1=>> exit")
+        pid=int(input("pic product from list:"))
+        if(pid!=-1):
+            qu=int(input("quantity:"))
+            q="select * from product where pid=%s  "
+            val=(pid,)
+            cur.execute(q,val)
+            data=cur.fetchall()
+            
+            for x in data:
+                print(x[0]," ",x[1],"  ",x[2])
+                tc=x[2]*qu
+                sum=sum+tc
+                #print("selected",pid)
+        elif(pid==-1):
+            
+            pid=0
+    return sum
+ch=1
+while ch!=0:            
+    print("****************Welcome to billing System********************* ")
+    print("1=>>>  Admin")
+    show()
+    print("3=>>>  select product ")
+    print("4=>>>  exit")
+
+    ch=int(input())
+    if(ch==1):
+        admin()
+    elif(ch==2):
+        show()
+    elif(ch==3):
+        total=bill()    
+    else:
+            ch=0
+else:
+    print("your total bill",total)
+    print("************thanks for comming**************")
+con.close
